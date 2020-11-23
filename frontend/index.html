@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dota2Api</title>
+</head>
+<body>
+    <button type="submit" onclick="AllData()">Show All json</button>
+    <button type="submit" onclick="compareNameData()">Show Hero json</button>
+    <div id="container"></div>
+    <select id="select">
+    </select>
+    <div id='demoJson'></div>
+</body>
+<script>
+    async function Data(){
+        let resp= await fetch(`http://localhost:1337/characteristics`,{
+                method:'GET',
+            }).then(res => res.json()).then(data => select(data));
+
+        async function select(data){
+            var dropDown =  document.getElementById("select");
+            let heroName =  [];
+            for(var i = 0;i<data.length;i++){ 
+                heroName.push(data[i].Hero);
+            };
+            for(var i = 0;i<heroName.length;i++){
+                var opt = document.createElement("option");
+                opt.text = heroName[i];
+                opt.value = heroName[i];
+                opt.className = heroName[i];
+                dropDown.appendChild(opt);
+            }
+            var container = document.getElementById('container');
+            container.appendChild(dropDown);
+        };
+
+    };
+
+    async function AllData(){
+        let resp= await fetch(`http://localhost:1337/characteristics`,{
+            method:'GET',
+            
+        }).then(res => res.json()).then(data => showAllData(data));
+
+        async function showAllData(data){
+            let mainContainer = document.getElementById("demoJson");
+            mainContainer.innerHTML = ""
+            for (var i = 0; i < data.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = 'Name: ' + data[i].Hero;
+                mainContainer.appendChild(div);
+            }
+        }
+    }
+
+    async function compareNameData(){
+        let name = document.getElementById('select').value
+        
+        let respHeroName = await fetch(`http://localhost:1337/characteristics/${name}`,{
+            method:'GET',
+            
+        }).then(res => res.json()).then(data => showSpecificData(data));
+
+        async function showSpecificData(data){
+            let mainContainer = document.getElementById("demoJson");
+            mainContainer.innerHTML = ""
+            var div = document.createElement("div");
+            div.innerHTML = 'Name: ' + data.Hero;
+            mainContainer.appendChild(div);
+        }
+    }
+    Data()
+</script>
+</html>
