@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompareRate</title>
+</head>
+<style>
+    table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+<body>
+    <div class="container">
+    <a href="index.html"><button>Home</button></a>
+    <button type="submit" onclick="AllData()">Show All json</button>
+    <button type="submit" onclick="compareNameData()">Show Hero json</button>
+    <div id="container"></div>
+    <select id="select"></select>
+    <p>------------------</p>
+    <select id="select_hero"></select>
+    <div id='demoJson'></div>
+    </div>
+</body>
+<script>
+    async function Data(){
+        let resp= await fetch(`http://localhost:1337/characteristics`,{
+                method:'GET',
+            }).then(res => res.json()).then(data => select(data));
+
+        async function select(data){
+            var dropDown =  document.getElementById("select");
+            var dropDown_s =  document.getElementById("select_hero");
+            let heroName =  [];
+            for(var i = 0;i<data.length;i++){ 
+                heroName.push(data[i].Hero);
+            };
+            for(var i = 0;i<heroName.length;i++){
+                let opt = document.createElement("option");
+                opt.text = heroName[i];
+                opt.value = heroName[i];
+                opt.className = heroName[i];
+                await dropDown.appendChild(opt);
+            }
+
+            for(var i = 0;i<heroName.length;i++){
+                let opt = document.createElement("option");
+                opt.text = heroName[i];
+                opt.value = heroName[i];
+                opt.className = heroName[i];
+                await dropDown_s.appendChild(opt);
+            }
+            var container = document.getElementById('container');
+            container.appendChild(dropDown);
+            container.appendChild(dropDown_s);
+        };
+
+    };
+
+    async function AllData(){
+        let resp= await fetch(`http://localhost:1337/characteristics`,{
+            method:'GET',
+            
+        }).then(res => res.json()).then(data => showAllData(data));
+
+        async function showAllData(data){
+            let mainContainer = document.getElementById("demoJson");
+            mainContainer.innerHTML = ""
+            for (var i = 0; i < data.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = 'Name: ' + data[i].Hero;
+                mainContainer.appendChild(div);
+            }
+        }
+    }
+
+    async function compareNameData(){
+        let name_1 = document.getElementById('select').value
+        let name_2 = document.getElementById('select_hero').value
+        
+        let respHeroName = await fetch(`http://localhost:1337/characteristics/hero/${name_1}`,{
+            method:'GET',
+        })
+        let respHeroName_2 = await fetch(`http://localhost:1337/characteristics/hero/${name_2}`,{
+            method:'GET',
+        })
+        // .then(res => res.json()).then(data => showSpecificData(data));
+
+        let val = await respHeroName.json()
+        let val_2 = await respHeroName_2.json()
+        let key = Object.keys(val[0]);
+
+        // obj to float
+        let value = Object.values(val[0]);
+        let value_2 = Object.values(val_2[0]);
+        let rate_diff = [];
+        for(var i=2; i<12; i++){
+            let percent = parseFloat(value[i].slice(0,-1))
+            let percent_2 = parseFloat(value_2[i].slice(0,-1))
+            let diff = percent - percent_2;
+            rate_diff.push(diff)
+        }
+
+        createTableForm(key)
+        showSpecificData(val, true)
+        showSpecificData(val_2, false)
+
+        // function 
+
+        function reset(ele){
+            element = document.getElementById(ele)
+            element.innerHTML = "";
+        }
+
+        function createTableForm(key){
+            reset("demoJson");
+            let table = document.createElement("table");
+            table.setAttribute("id","table")
+            let tr_1 = document.createElement("tr");
+            tr_1.setAttribute("id","tr_1");
+            table.appendChild(tr_1);
+            let th_2 = document.createElement("th");
+            th_2.innerHTML = " "
+            tr_1.appendChild(th_2)
+            function createTable(i,name){
+                let tr_2 = document.createElement("tr");
+                tr_2.setAttribute("id",`tr_2_${i}`)
+                let pickKey = document.createElement("td")
+                pickKey.innerHTML = `${name}`
+                tr_2.appendChild(pickKey);
+                table.appendChild(tr_2)
+            }
+            for(var i=2; i<key.length-1;i++){
+                createTable(i,key[i]);
+            }
+            mainContainer = document.getElementById("demoJson")
+            mainContainer.appendChild(table)
+        }
+
+        async function showSpecificData(data, ex){
+            
+            let tr_1 = document.getElementById("tr_1");
+            let th_1 = document.createElement("th");
+            th_1.innerHTML = data[0].Hero
+            tr_1.appendChild(th_1)
+            if (ex){
+                let th_ex = document.createElement("th");
+                th_ex.innerHTML = "diff%"
+                tr_1.appendChild(th_ex)
+            }
+
+            async function createTable(i,name){
+                let tr_2 = document.getElementById(`tr_2_${i}`);
+                let pickVal = document.createElement("td")
+                pickVal.innerHTML = data[0][name]
+                tr_2.appendChild(pickVal);
+                if (ex){
+                    let td_ex_diff = document.createElement("td");
+                    td_ex_diff.setAttribute("id",`ex_${i}`)
+                    let rate = `${(Math.round((rate_diff[i-2] + Number.EPSILON) * 100) / 100).toString()}%`
+                    if (rate_diff[i-2] > 0){
+                        td_ex_diff.innerHTML = rate.fontcolor("green")
+                    } else if (rate_diff[i-2] < 0){
+                        td_ex_diff.innerHTML = rate.fontcolor("red")
+                    } else {
+                        td_ex_diff.innerHTML = rate
+                    }
+                    tr_2.appendChild(td_ex_diff)
+                }
+
+            }
+            for(var i=2; i<key.length-1;i++){
+                createTable(i,key[i]);
+            }
+        }
+    }
+    Data()
+</script>
+</html>
