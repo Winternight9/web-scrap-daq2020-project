@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info</title>
+</head>
+<style>
+    table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+body {
+    background-image: url(https://c4.wallpaperflare.com/wallpaper/874/768/55/dota-dota-2-video-games-the-international-ti10-hd-wallpaper-preview.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+h1 {
+    color:white;
+    text-align: center;
+}
+</style>
+
+<body>
+    <h1 id="heroname"><%= name %></h1>
+    <table>
+        <% console.log(Object.keys(rate[0]).length) %>
+            <tr>
+                <td>
+                </td>
+            </tr>
+    </table>
+    <div></div>
+</body>
+<script>
+    async function heroDetail(){
+        let name = `<%= name %>`
+        let resp_attribute = await fetch(`http://localhost:1337/characters/hero/${name}`,{
+               method:'GET',
+           })
+       let resp_rate = await fetch(`http://localhost:1337/characteristics/hero/${name}`,{
+               method:'GET',
+           })
+       let rate = await resp_rate.json()
+       let attribute = await resp_attribute.json()
+    //    console.log(rate)
+    //    console.log(Object.keys(rate[0]))
+    }
+    heroDetail()
+</script>
+</html>

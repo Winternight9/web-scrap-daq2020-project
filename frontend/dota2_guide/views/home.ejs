@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <div id="allimg"></div>
+</body>
+<script>
+    async function fieldImg(){
+        let resp = await fetch(`http://localhost:1337/characters`,{
+            method:'GET',
+        });
+        let val = await resp.json();
+        let demo = [];
+
+        // Sort Object by hero name
+        val.sort(function(a,b){
+            a = a.displayName.toLowerCase()
+            b = b.displayName.toLowerCase()
+            return a<b ? -1 : a>b ? 1 : 0;
+        });
+        console.log(val)
+        let allImg = [];
+        let div = document.getElementById("allimg");
+        async function getAllImg(){
+            for(let i=0;i<val.length;i++){
+                allImg.push(val[i].img)
+            };
+            for(let i=0;i<allImg.length;i++){
+                let tagA = document.createElement('a');
+                let img = document.createElement('img')
+                tagA.setAttribute('href',`/home/${val[i].displayName}`)
+                img.setAttribute('src',allImg[i])
+                tagA.setAttribute('id',`tagimg${i}`)
+                img.setAttribute('id',`imgHero${i}`)
+                tagA.appendChild(img)
+                div.appendChild(tagA)
+            };
+        };
+        getAllImg();
+    };
+    fieldImg();
+</script>
+</html>
