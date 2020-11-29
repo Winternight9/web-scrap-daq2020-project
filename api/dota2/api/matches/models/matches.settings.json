@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matches",
+  "info": {
+    "name": "matches",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "match_id": {
+      "type": "string"
+    },
+    "durations": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string"
+    },
+    "radiant": {
+      "type": "string"
+    },
+    "dire": {
+      "type": "string"
+    }
+  }
+}

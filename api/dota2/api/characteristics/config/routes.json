@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/characteristics",
+      "handler": "characteristics.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/characteristics/:id",
+      "handler": "characteristics.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/characteristics",
+      "handler": "characteristics.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/characteristics/:id",
+      "handler": "characteristics.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/characteristics/:id",
+      "handler": "characteristics.delete",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/characteristics/hero/:Hero",
+      "handler": "characteristics.findOneByName",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

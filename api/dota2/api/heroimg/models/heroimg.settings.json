@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "heroimgs",
+  "info": {
+    "name": "Heroimg",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "img": {
+      "type": "string"
+    }
+  }
+}
