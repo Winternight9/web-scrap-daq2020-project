@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import Plot from 'react-plotly.js'
 import '../style/rate.css'
+
 
 const Rate = (props) => {
     const [firstHeroWinPickRateData, setFirstHeroWinPickRateData] = useState([])
     const [secondHeroWinPickRateData, setSecondHeroWinPickRateData] = useState([])
     const [keyOfJsonHeroWinPickRate, setKeyOfJsonHeroWinPickRate] = useState([])
+    const [firstHeroWinRateFolatValue, setFirstHeroWinRateFolatValue] = useState([])
+    const [secondHeroWinRateFolatValue, setSecondHeroWinRateFolatValue] = useState([])
+    const [firstHeroPickRateFolatValue, setFirstHeroPickRateFolatValue] = useState([])
+    const [secondHeroPickRateFolatValue, setSecondHeroPickRateFolatValue] = useState([])
+    const [keyOfJsonHeroWinRate, setKeyOfJsonHeroWinRate] = useState([])
+    const [keyOfJsonHeroPickRate, setKeyOfJsonHeroPickRate] = useState([])
+
+
     useEffect(() => {
         async function fetchData(){
             const firstHeroResponse = await fetch(`http://localhost:1337/characteristics/hero/${props.firstHero}`,{
@@ -18,6 +28,33 @@ const Rate = (props) => {
             const firstHeroValue = Object.values(firstHeroWinPickRateJson[0]).slice(2,12);
             const secondHeroValue = Object.values(secondHeroWinPickRateJson[0]).slice(2,12);
             const keyOfHeroJson = Object.keys(firstHeroWinPickRateJson[0]).slice(2,12);
+            let winPercentDiffFloatValue = [];
+            let pickPercentDiffFloatValue = [];
+            let firstHeroWinFloatValue = [];
+            let secondHeroWinFloatValue = [];
+            let firstHeroPickFloatValue = [];
+            let secondHeroPickFloatValue = [];
+            let keyWordPickRate = [];
+            let keyWordWinRate = [];
+            for(let index =0; index < keyOfHeroJson.length;index++){
+                if(index%2 === 0){
+                    firstHeroPickFloatValue.push(parseFloat(firstHeroValue[index]))
+                    secondHeroPickFloatValue.push(parseFloat(secondHeroValue[index]))
+                    keyWordPickRate.push(keyOfHeroJson[index])
+                }else{
+                    firstHeroWinFloatValue.push(parseFloat(firstHeroValue[index]))
+                    secondHeroWinFloatValue.push(parseFloat(secondHeroValue[index]))
+                    keyWordWinRate.push(keyOfHeroJson[index])
+                }
+            }
+            setKeyOfJsonHeroWinRate(keyWordWinRate)
+            setFirstHeroWinRateFolatValue(firstHeroWinFloatValue)
+            setSecondHeroWinRateFolatValue(secondHeroWinFloatValue)
+
+            setKeyOfJsonHeroPickRate(keyWordPickRate)
+            setFirstHeroPickRateFolatValue(firstHeroPickFloatValue)
+            setSecondHeroPickRateFolatValue(secondHeroPickFloatValue)
+
             setFirstHeroWinPickRateData(firstHeroValue);
             setSecondHeroWinPickRateData(secondHeroValue);
             setKeyOfJsonHeroWinPickRate(keyOfHeroJson);
@@ -55,6 +92,48 @@ const Rate = (props) => {
                     ))}
                 </tbody>
             </table>
+            <Plot id="winRateGraph"
+                    data={[
+                    {
+                        x: keyOfJsonHeroWinRate,
+                        y: firstHeroWinRateFolatValue,
+                        type: 'scatter',
+                        mode:"lines",
+                        marker: {color: 'orange'},
+                        name:props.firstHero
+                    },
+                    {
+                        x: keyOfJsonHeroWinRate,
+                        y: secondHeroWinRateFolatValue,
+                        type: 'scatter',
+                        mode:"lines",
+                        marker: {color: 'blue'},
+                        name:props.secondHero
+                    },
+                    ]}
+                    layout={ {width: 620, height: 540, title: 'WinRate Chart'} }
+                />
+                <Plot id="pickRateGraph"
+                    data={[
+                    {
+                        x: keyOfJsonHeroPickRate,
+                        y: firstHeroPickRateFolatValue,
+                        type: 'scatter',
+                        mode:"lines",
+                        marker: {color: 'orange'},
+                        name:props.firstHero
+                    },
+                    {
+                        x: keyOfJsonHeroPickRate,
+                        y: secondHeroPickRateFolatValue,
+                        type: 'scatter',
+                        mode:"lines",
+                        marker: {color: 'blue'},
+                        name:props.secondHero
+                    },
+                    ]}
+                    layout={ {width: 620, height: 540, title: 'PickRate Chart'} }
+                />
         </div>
     )
 }
