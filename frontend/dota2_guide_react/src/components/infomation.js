@@ -10,6 +10,9 @@ const Infomation = (props) => {
     const [keyOfDurationMidGame, setKeyOfDurationMidGame] = useState(0)
     const [keyOfDurationLateGame, setKeyOfDurationLateGame] = useState(0)
     const [heroImage, setHeroImage] = useState("") 
+    const [totalGameNumber,setTotalGameNumber] = useState(0)
+    const [winCountNumber, setWinCountNumber] = useState(0)
+    const [pickCountNumber, setPickCountNumber] = useState(0)
 
     useEffect(() => {
         async function fetchData() {
@@ -22,7 +25,6 @@ const Infomation = (props) => {
             const matchResponse = await fetch('http://localhost:1337/matches',{
                 method:'GET',
             })
-
             
             const heroRateJson = await heroRateResponse.json();
             const heroAttributeJson = await heroAttributeResponse.json();
@@ -32,10 +34,13 @@ const Infomation = (props) => {
             const keyOfHeroRateJson = Object.keys(heroRateJson[0]).slice(2,12);
             const keyOfHeroAttributeJson = Object.keys(heroAttributeJson[0]).slice(22,38);
 
+            console.log(matchJson);
             let lateGameCount = 0;
             let earlyGameCount = 0;
             let midGameCount = 0;
-            
+            let winCount = 0;
+            let pickCount =0;
+
             for(let i = 0 ; i  < matchJson.length ; i++) {
                 let duration = matchJson[i]['durations'].replace(":","");
                 let matchresult = matchJson[i]['result']
@@ -46,18 +51,37 @@ const Infomation = (props) => {
                     if(matchWinnerHeroes[j] == props.name ){
                         if(parseInt(duration) > 4000 ){
                             lateGameCount += 1;
+                            winCount +=1;
                         }
                         else if(parseInt(duration) >2500){
                             midGameCount += 1;
+                            winCount +=1;
                         }
                         else if(parseInt(duration)> 0){
                             earlyGameCount += 1;
+                            winCount +=1;
                         }
                     break;
                 }
             }
-            
             }
+            for(let i = 0 ; i  < matchJson.length ; i++) {
+                let matchDireHeroes = matchJson[i]['dire'].split(",")
+                let matchRadiantHeroes = matchJson[i]['radiant'].split(",")
+                
+                for(let j = 0; j < 5 ; j++){
+                    if(matchDireHeroes[j] == props.name ){
+                       pickCount +=1;
+                       break;
+                        }
+                    else if(matchRadiantHeroes[j] == props.name ){
+                        pickCount +=1;
+                        break;
+                    }
+                }
+            }
+            
+            
             setKeyOfDurationEarlyGame(earlyGameCount)
             setKeyOfDurationMidGame(midGameCount)
             setKeyOfDurationLateGame(lateGameCount)
@@ -65,7 +89,11 @@ const Infomation = (props) => {
             setHeroAttributeData(heroAttributeValue)
             setKeyOfJsonWinPickRateData(keyOfHeroRateJson)
             setKeyOfJsonAttributeData(keyOfHeroAttributeJson)
+
             setHeroImage(heroAttributeJson[0]['img'])
+            setTotalGameNumber(matchJson.length)
+            setPickCountNumber(pickCount)
+            setWinCountNumber(winCount)
 
         }
         fetchData()
@@ -115,9 +143,40 @@ const Infomation = (props) => {
                     ))}
                 </tbody>
             </table>
-            {keyOfDurationEarlyGame}
-            {keyOfDurationMidGame}
-            {keyOfDurationLateGame}
+            <table id="winDurationTable">
+                <thead>
+                <tr id="trhead1">
+                    <th></th>
+                        <th>{props.name}
+                        </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Total Analyze Game</td>
+                    <td>{totalGameNumber}</td>
+                </tr>
+                    <td>Total Pick</td>
+                    <td>{pickCountNumber}</td>
+                <tr>
+                    <td>Total Win</td>
+                    <td>{winCountNumber} </td>
+                </tr>
+                 <tr>
+                   <td> EarlyGameWin 00:00 - 25:00</td> 
+                   <td>{keyOfDurationEarlyGame}</td>
+                </tr>    
+                <tr>
+                   <td> MidGameWin 25:01 - 40:00</td>
+                   <td>{keyOfDurationMidGame}</td>
+                </tr>    
+                <tr>
+                   <td> LateGameWin 40:01 - </td> 
+                   <td>{keyOfDurationLateGame}</td>
+                </tr>    
+                
+                </tbody>
+            </table>
         </div>
     )
 }
