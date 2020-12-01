@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'
 import '../style/infomation.css'
 
 const Infomation = (props) => {
@@ -13,13 +14,21 @@ const Infomation = (props) => {
     const [totalGameNumber,setTotalGameNumber] = useState(0)
     const [winCountNumber, setWinCountNumber] = useState(0)
     const [pickCountNumber, setPickCountNumber] = useState(0)
+    const [keyOfCalculateStatus, setKeyOfCalculateStatus] = useState([]);
+    const [baseStatValue, setBaseStatValue] = useState([]);
+    const [gainStatValue, setGainStatValue] = useState([]);
+    const [allLevel, setAllLevel] = useState([]);
+    const [level, setLevel] = useState(1);
+    const [heroGainStatValue, setHeroGainStatValue] = useState([]);
+    const [keyOfStatus, setKeyOfStatus] = useState([]);
+    const { name } = useParams()
 
     useEffect(() => {
         async function fetchData() {
-            const heroRateResponse = await fetch(`http://localhost:1337/characteristics/hero/${props.name}`,{
+            const heroRateResponse = await fetch(`http://localhost:1337/characteristics/hero/${name}`,{
                 method:'GET',
             })
-            const heroAttributeResponse = await fetch(`http://localhost:1337/characters/hero/${props.name}`,{
+            const heroAttributeResponse = await fetch(`http://localhost:1337/characters/hero/${name}`,{
                 method:'GET',
             })
             const matchResponse = await fetch('http://localhost:1337/matches',{
@@ -33,8 +42,22 @@ const Infomation = (props) => {
             const heroAttributeValue = Object.values(heroAttributeJson[0]).slice(22,38);
             const keyOfHeroRateJson = Object.keys(heroRateJson[0]).slice(2,12);
             const keyOfHeroAttributeJson = Object.keys(heroAttributeJson[0]).slice(22,38);
-
-            console.log(matchJson);
+          
+            let levelList = [];
+            for(let i =1;i<31; i++){
+                levelList.push(i)
+            }
+            let keyStat = []
+            let heroGainValue = []
+            for(let i=0; i<keyOfHeroAttributeJson.slice(10,16).length;i++){
+                if(i%2 === 0){
+                    let cal = (Math.round((heroAttributeValue.slice(10,16)[i] + (heroAttributeValue.slice(10,16)[i+1]*level)+ Number.EPSILON) * 100)/100);
+                    heroGainValue.push(cal)
+                    keyStat.push(keyOfHeroAttributeJson.slice(10,16)[i].replace('Base',''))
+                }
+            }
+        }
+      
             let lateGameCount = 0;
             let earlyGameCount = 0;
             let midGameCount = 0;
@@ -48,7 +71,7 @@ const Infomation = (props) => {
                 
 
                 for(let j = 0; j < 5 ; j++){
-                    if(matchWinnerHeroes[j] == props.name ){
+                    if(matchWinnerHeroes[j] == name ){
                         if(parseInt(duration) > 4000 ){
                             lateGameCount += 1;
                             winCount +=1;
@@ -65,16 +88,17 @@ const Infomation = (props) => {
                 }
             }
             }
+      
             for(let i = 0 ; i  < matchJson.length ; i++) {
                 let matchDireHeroes = matchJson[i]['dire'].split(",")
                 let matchRadiantHeroes = matchJson[i]['radiant'].split(",")
                 
                 for(let j = 0; j < 5 ; j++){
-                    if(matchDireHeroes[j] == props.name ){
+                    if(matchDireHeroes[j] == name ){
                        pickCount +=1;
                        break;
                         }
-                    else if(matchRadiantHeroes[j] == props.name ){
+                    else if(matchRadiantHeroes[j] == name ){
                         pickCount +=1;
                         break;
                     }
@@ -82,14 +106,20 @@ const Infomation = (props) => {
             }
             
             
+            setHeroGainStatValue(heroGainValue);
+            setKeyOfStatus(keyStat)
+            setAllLevel(levelList)
+
+            setHeroWinPickRateData(heroRateValue)
+            setHeroAttributeData(heroAttributeValue)
+
+            setKeyOfJsonWinPickRateData(keyOfHeroRateJson)
+            setKeyOfJsonAttributeData(keyOfHeroAttributeJson)
+  
+
             setKeyOfDurationEarlyGame(earlyGameCount)
             setKeyOfDurationMidGame(midGameCount)
             setKeyOfDurationLateGame(lateGameCount)
-            setHeroWinPickRateData(heroRateValue)
-            setHeroAttributeData(heroAttributeValue)
-            setKeyOfJsonWinPickRateData(keyOfHeroRateJson)
-            setKeyOfJsonAttributeData(keyOfHeroAttributeJson)
-
             setHeroImage(heroAttributeJson[0]['img'])
             setTotalGameNumber(matchJson.length)
             setPickCountNumber(pickCount)
@@ -97,17 +127,29 @@ const Infomation = (props) => {
 
         }
         fetchData()
+    },[props.name, level] )
+    function handleChangeLevel(event) {
+        setLevel(event.target.value)
+      }
 
-    },[props.name] )
-
-    return (
+   return (
         <div id="specificHero">
-            
+            <select name="level" id="lvl" onChange={handleChangeLevel}>
+                {allLevel.map((data) => (
+                    <option 
+                    value={data} 
+                    key={data} 
+                    >
+                    {data}
+                    </option>
+                ))
+                }
+            </select>
            <table id="rateTable">
                 <thead>
                 <tr id="tr_1">
-                    <th><img src= {heroImage}></img></th>
-                    <th>{props.name}</th>
+                    <th></th>
+                    <th>{name}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -127,7 +169,7 @@ const Infomation = (props) => {
                 <thead>
                     <tr id="tr_2">
                         <th></th>
-                        <th>{props.name}</th>
+                        <th>{name}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -143,15 +185,33 @@ const Infomation = (props) => {
                     ))}
                 </tbody>
             </table>
+
+            <table id="calculateStatTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{name}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {keyOfStatus.map((data, index) => (
+                        <tr key={index}>
+                            <td>{data}</td>
+                            <td>{heroGainStatValue[index]}</td>
+                        </tr>
+                    ))}
+                    <tbody>
+             </table>
+
             <table id="winDurationTable">
                 <thead>
                 <tr id="trhead1">
                     <th></th>
-                        <th>{props.name}
+                        <th>{name}
                         </th>
                 </tr>
                 </thead>
-                <tbody>
+               
                 <tr>
                     <td>Total Analyze Game</td>
                     <td>{totalGameNumber}</td>
