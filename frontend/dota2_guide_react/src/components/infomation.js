@@ -56,7 +56,7 @@ const Infomation = (props) => {
                     keyStat.push(keyOfHeroAttributeJson.slice(10,16)[i].replace('Base',''))
                 }
             }
-        }
+        
       
             let lateGameCount = 0;
             let earlyGameCount = 0;
@@ -127,11 +127,12 @@ const Infomation = (props) => {
 
         }
         fetchData()
-    },[props.name, level] )
+    },[props.name, level])
     function handleChangeLevel(event) {
         setLevel(event.target.value)
       }
-
+    
+    
    return (
         <div id="specificHero">
             <select name="level" id="lvl" onChange={handleChangeLevel}>
@@ -200,7 +201,7 @@ const Infomation = (props) => {
                             <td>{heroGainStatValue[index]}</td>
                         </tr>
                     ))}
-                    <tbody>
+                    </tbody>
              </table>
 
             <table id="winDurationTable">
@@ -211,7 +212,7 @@ const Infomation = (props) => {
                         </th>
                 </tr>
                 </thead>
-               
+                <tbody>
                 <tr>
                     <td>Total Analyze Game</td>
                     <td>{totalGameNumber}</td>
