@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Plot from 'react-plotly.js'
 import { useParams } from 'react-router-dom'
 import '../style/infomation.css'
 
@@ -22,6 +23,13 @@ const Infomation = (props) => {
     const [heroGainStatValue, setHeroGainStatValue] = useState([]);
     const [keyOfStatus, setKeyOfStatus] = useState([]);
     const { name } = useParams()
+    const [pickRate, setPickRate] = useState([])
+    const [winRate, setWinRate] = useState([])
+    const [keyWordPickRate, setKeyWordPickRate] = useState([])
+    const [keyWordWinRate, setKeyWordWinRate] = useState([])
+
+
+
 
     useEffect(() => {
         async function fetchData() {
@@ -56,8 +64,12 @@ const Infomation = (props) => {
                     keyStat.push(keyOfHeroAttributeJson.slice(10,16)[i].replace('Base',''))
                 }
             }
-        
-      
+
+            let winRate = []
+            let pickRate = []
+            let keyOfWinRate = []
+            let keyOfPickRate = []
+
             let lateGameCount = 0;
             let earlyGameCount = 0;
             let midGameCount = 0;
@@ -88,6 +100,18 @@ const Infomation = (props) => {
                 }
             }
             }
+            for(let index =0; index < heroRateValue.length;index++){
+                if(index%2 === 0){
+                    pickRate.push(parseFloat(heroRateValue[index]))
+                    keyOfPickRate.push(keyOfHeroRateJson[index])
+                }
+                else{
+                    winRate.push(parseFloat(heroRateValue[index]))
+                    keyOfWinRate.push(keyOfHeroRateJson[index])
+                }
+            }
+
+
       
             for(let i = 0 ; i  < matchJson.length ; i++) {
                 let matchDireHeroes = matchJson[i]['dire'].split(",")
@@ -125,6 +149,12 @@ const Infomation = (props) => {
             setPickCountNumber(pickCount)
             setWinCountNumber(winCount)
 
+
+            // Graph
+            setPickRate(pickRate)
+            setWinRate(winRate)
+            setKeyWordPickRate(keyOfPickRate)
+            setKeyWordWinRate(keyOfWinRate)
         }
         fetchData()
     },[props.name, level])
@@ -149,7 +179,7 @@ const Infomation = (props) => {
            <table id="rateTable">
                 <thead>
                 <tr id="tr_1">
-                    <th></th>
+                    <th><img src= {heroImage}></img></th>
                     <th>{name}</th>
                 </tr>
                 </thead>
@@ -238,7 +268,37 @@ const Infomation = (props) => {
                 
                 </tbody>
             </table>
+            <Plot id="pickRateGraph"
+                    data={[
+                    {
+                        x: keyWordPickRate,
+                        y: pickRate,
+                        type: 'scatter',
+                        mode:"lines + markers",
+                        marker: {color: 'orange'},
+                        name: name
+                    },
+                   
+                    ]}
+                    layout={ {width: 640, height: 540, title: 'PickRate Chart'} }
+                />
+
+            <Plot id="winRateGraph"
+                    data={[
+                    {
+                        x: keyWordWinRate,
+                        y: winRate,
+                        type: 'scatter',
+                        mode:"lines + markers",
+                        marker: {color: 'blue'},
+                        name: name
+                    },
+                   
+                    ]}
+                    layout={ {width: 640, height: 540, title: 'WinRate Chart'} }
+                />
         </div>
+        
     )
 }
 export default Infomation
