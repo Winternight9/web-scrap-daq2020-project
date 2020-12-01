@@ -242,3 +242,8 @@ license.txt
 exports
 .cache
 build
+
+.strapi-updater.json
+.ability.json.icloud
+package-lock.json
+.eslintcache
