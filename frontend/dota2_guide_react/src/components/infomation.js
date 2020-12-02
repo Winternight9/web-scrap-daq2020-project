@@ -165,17 +165,8 @@ const Infomation = (props) => {
     
    return (
         <div id="specificHero">
-            <select name="level" id="lvl" onChange={handleChangeLevel}>
-                {allLevel.map((data) => (
-                    <option 
-                    value={data} 
-                    key={data} 
-                    >
-                    {data}
-                    </option>
-                ))
-                }
-            </select>
+            <container id ="alldata"> 
+            
            <table id="rateTable">
                 <thead>
                 <tr id="tr_1">
@@ -218,9 +209,19 @@ const Infomation = (props) => {
             </table>
 
             <table id="calculateStatTable">
+                
                 <thead>
                     <tr>
-                        <th></th>
+                        <th> <select name="level" id="lvl" onChange={handleChangeLevel}>
+                {allLevel.map((data) => (
+                    <option 
+                    value={data} 
+                    key={data} 
+                    > {`Level${data}`}
+                    </option>
+                ))
+                }
+            </select></th>
                         <th>{name}</th>
                     </tr>
                 </thead>
@@ -297,6 +298,7 @@ const Infomation = (props) => {
                     ]}
                     layout={ {width: 640, height: 540, title: 'WinRate Chart'} }
                 />
+             </container>
         </div>
         
     )
