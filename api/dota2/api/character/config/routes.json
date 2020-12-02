@@ -55,6 +55,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/characters/hero/attribute/:primaryAttribute",
+      "handler": "character.searchHeroByPrimaryAttribute",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

@@ -23,4 +23,16 @@ module.exports = {
         
             return entities.map(entity => sanitizeEntity(entity, { model: strapi.models.heroimg }));
         },
+
+        async findOne(ctx) {
+            const { id } = ctx.params;
+            const entity = await strapi.services.heroimg.findOne({ id });
+            return sanitizeEntity(entity, { model: strapi.models.heroimg });
+            },
+        
+        async findOneByName(ctx) {
+            const { name } = ctx.params;
+            const entity = await strapi.services.heroimg.findOne({ name });
+            return sanitizeEntity(entity, { model: strapi.models.heroimg });
+            },
 };

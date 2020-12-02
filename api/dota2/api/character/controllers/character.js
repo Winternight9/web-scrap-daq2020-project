@@ -30,5 +30,11 @@ module.exports = {
         const entities = await strapi.query('character').model.find({'displayName' : name});
         return sanitizeEntity(entities, { model: strapi.models.character });
         },
+    
+    async searchHeroByPrimaryAttribute(ctx){
+        const { primaryAttribute } = ctx.params;
+        const entities = await strapi.query('character').model.find({'primaryAttribute': primaryAttribute});
+        return sanitizeEntity(entities, { model: strapi.models.character });
+    }
 
 };

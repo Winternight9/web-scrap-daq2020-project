@@ -47,6 +47,22 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/matches/result/:result",
+      "handler": "matches.searchByResult",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/matches/count/result/:result",
+      "handler": "matches.countSearchByResult",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

@@ -47,6 +47,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/heroimgs/hero/:name",
+      "handler": "heroimg.findOneByName",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

@@ -23,4 +23,22 @@ module.exports = {
         
             return entities.map(entity => sanitizeEntity(entity, { model: strapi.models.matches }));
         },
+        async findOne(ctx) {
+            const { id } = ctx.params;
+            const entity = await strapi.services.matches.findOne({ id });
+            return sanitizeEntity(entity, { model: strapi.models.matches });
+        },
+
+        async searchByResult(ctx){
+            const { result } = ctx.params;
+            const entity = await strapi.services.matches.search({ _q: `${result}`, _limit: -1});
+            return sanitizeEntity(entity, { model: strapi.models.matches });
+        },
+
+        async countSearchByResult(ctx){
+            const { result } = ctx.params;
+            const entity = await strapi.query('matches').countSearch({ _q: `${result}` });
+            return sanitizeEntity(entity, { model: strapi.models.matches });
+        }
+        
 };
