@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js'
 import { useParams } from 'react-router-dom'
+import { Pie } from 'react-chartjs-2'
 import '../style/infomation.css'
 
 const Infomation = (props) => {
@@ -15,9 +16,6 @@ const Infomation = (props) => {
     const [totalGameNumber,setTotalGameNumber] = useState(0)
     const [winCountNumber, setWinCountNumber] = useState(0)
     const [pickCountNumber, setPickCountNumber] = useState(0)
-    const [keyOfCalculateStatus, setKeyOfCalculateStatus] = useState([]);
-    const [baseStatValue, setBaseStatValue] = useState([]);
-    const [gainStatValue, setGainStatValue] = useState([]);
     const [allLevel, setAllLevel] = useState([]);
     const [level, setLevel] = useState(1);
     const [heroGainStatValue, setHeroGainStatValue] = useState([]);
@@ -28,7 +26,33 @@ const Infomation = (props) => {
     const [keyWordPickRate, setKeyWordPickRate] = useState([])
     const [keyWordWinRate, setKeyWordWinRate] = useState([])
 
+    const gameAnalyzeDataPieChart = {
+        labels:['EarlyGameWin', 'MidGameWin', 'LateGameWin'],
+        datasets:[
+            {
+                data: [keyOfDurationEarlyGame,keyOfDurationMidGame,keyOfDurationLateGame],
+                backgroundColor:[
+                    'green',
+                    'orange',
+                    'red'
+                ]
+            }
+        ]
+    };
 
+    const statusPieChart = {
+        labels:keyOfStatus,
+        datasets:[
+            {
+                data: heroGainStatValue,
+                backgroundColor:[
+                    'red',
+                    'cyan',
+                    'green',
+                ]
+            }
+        ]
+    };
 
 
     useEffect(() => {
@@ -83,7 +107,7 @@ const Infomation = (props) => {
                 
 
                 for(let j = 0; j < 5 ; j++){
-                    if(matchWinnerHeroes[j] == name ){
+                    if(matchWinnerHeroes[j] === name ){
                         if(parseInt(duration) > 4000 ){
                             lateGameCount += 1;
                             winCount +=1;
@@ -118,11 +142,11 @@ const Infomation = (props) => {
                 let matchRadiantHeroes = matchJson[i]['radiant'].split(",")
                 
                 for(let j = 0; j < 5 ; j++){
-                    if(matchDireHeroes[j] == name ){
+                    if(matchDireHeroes[j] === name ){
                        pickCount +=1;
                        break;
                         }
-                    else if(matchRadiantHeroes[j] == name ){
+                    else if(matchRadiantHeroes[j] === name ){
                         pickCount +=1;
                         break;
                     }
@@ -232,6 +256,15 @@ const Infomation = (props) => {
                         </tr>
                     ))}
                     </tbody>
+             <Pie
+                        data={statusPieChart}
+                        options={{
+                            title: {
+                                display: true,
+                                text: `Status Of ${name}`,
+                            },
+                        }}
+                    />
              </table>
 
             <table id="winDurationTable">
@@ -267,6 +300,17 @@ const Infomation = (props) => {
                 </tr>    
                 
                 </tbody>
+                <Pie
+                    data={gameAnalyzeDataPieChart}
+                    options={{
+                        title: {
+                            display: true,
+                            text: `Total Win of ${name} in ${totalGameNumber} matches`,
+                        },
+                    }}
+                    width={0.5}
+                    height={0.25}
+                />
             </table>
             <Plot id="pickRateGraph"
                     data={[
@@ -297,6 +341,7 @@ const Infomation = (props) => {
                     ]}
                     layout={ {width: 640, height: 540, title: 'WinRate Chart'} }
                 />
+                
         </div>
         
     )
