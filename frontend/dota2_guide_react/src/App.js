@@ -1,3 +1,4 @@
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Image from './components/image'
 import Rate from './components/rate'
@@ -5,6 +6,7 @@ import Attribute from './components/attribute'
 import Infomation from './components/infomation'
 import Navigation from './components/navigation'
 import React, { useState, useEffect } from 'react';
+
 
 import { BrowserRouter, Route} from 'react-router-dom';
 
@@ -79,8 +81,7 @@ function App() {
             >
               {data.displayName}
             </option>
-          ))
-        }
+          ))}
       </select>
       <select name="secondHero" id="selecSecondHero" onChange={handleChangeSecondHero}>
         {HeroesName.map((data) => (

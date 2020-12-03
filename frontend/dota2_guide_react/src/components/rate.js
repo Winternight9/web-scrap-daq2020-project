@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js'
+import { Row, Col } from 'react-bootstrap'
 import '../style/rate.css'
 
 
@@ -28,8 +29,6 @@ const Rate = (props) => {
             const firstHeroValue = Object.values(firstHeroWinPickRateJson[0]).slice(2,12);
             const secondHeroValue = Object.values(secondHeroWinPickRateJson[0]).slice(2,12);
             const keyOfHeroJson = Object.keys(firstHeroWinPickRateJson[0]).slice(2,12);
-            let winPercentDiffFloatValue = [];
-            let pickPercentDiffFloatValue = [];
             let firstHeroWinFloatValue = [];
             let secondHeroWinFloatValue = [];
             let firstHeroPickFloatValue = [];
@@ -64,6 +63,8 @@ const Rate = (props) => {
 
     return (
         <div id="rate">
+            <Row>
+                <Col>
             <table id="table">
                 <thead>
                 <tr id="tr_1">
@@ -92,13 +93,16 @@ const Rate = (props) => {
                     ))}
                 </tbody>
             </table>
-            <Plot id="winRateGraph"
+                </Col>
+            </Row>
+           <Row>
+           <Plot id="winRateGraph"
                     data={[
                     {
                         x: keyOfJsonHeroWinRate,
                         y: firstHeroWinRateFolatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'orange'},
                         name:props.firstHero
                     },
@@ -106,7 +110,7 @@ const Rate = (props) => {
                         x: keyOfJsonHeroWinRate,
                         y: secondHeroWinRateFolatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'blue'},
                         name:props.secondHero
                     },
@@ -119,7 +123,7 @@ const Rate = (props) => {
                         x: keyOfJsonHeroPickRate,
                         y: firstHeroPickRateFolatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'orange'},
                         name:props.firstHero
                     },
@@ -127,13 +131,14 @@ const Rate = (props) => {
                         x: keyOfJsonHeroPickRate,
                         y: secondHeroPickRateFolatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'blue'},
                         name:props.secondHero
                     },
                     ]}
                     layout={ {width: 620, height: 540, title: 'PickRate Chart'} }
                 />
+            </Row>
         </div>
     )
 }

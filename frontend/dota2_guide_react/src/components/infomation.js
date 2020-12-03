@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js'
 import { useParams } from 'react-router-dom'
 import { Pie } from 'react-chartjs-2'
+import { Row, Col } from 'react-bootstrap'
 import '../style/infomation.css'
 
 const Infomation = (props) => {
@@ -83,8 +84,13 @@ const Infomation = (props) => {
             let heroGainValue = []
             for(let i=0; i<keyOfHeroAttributeJson.slice(10,16).length;i++){
                 if(i%2 === 0){
-                    let cal = (Math.round((heroAttributeValue.slice(10,16)[i] + (heroAttributeValue.slice(10,16)[i+1]*level)+ Number.EPSILON) * 100)/100);
-                    heroGainValue.push(cal)
+                    if(level === 1){
+                        let cal = heroAttributeValue.slice(10,16)[i]
+                        heroGainValue.push(cal)
+                    }else{
+                        let cal = (Math.round((heroAttributeValue.slice(10,16)[i] + (heroAttributeValue.slice(10,16)[i+1]*level)+ Number.EPSILON) * 100)/100);
+                        heroGainValue.push(cal)
+                    }
                     keyStat.push(keyOfHeroAttributeJson.slice(10,16)[i].replace('Base',''))
                 }
             }
@@ -190,7 +196,7 @@ const Infomation = (props) => {
    return (
         <div id="specificHero">
             <container id ="alldata"> 
-            
+
            <table id="rateTable">
                 <thead>
                 <tr id="tr_1">
@@ -211,6 +217,7 @@ const Infomation = (props) => {
                     ))}
                 </tbody>
             </table>
+
             <table id="attributeTable">
                 <thead>
                     <tr id="tr_2">
@@ -231,7 +238,7 @@ const Infomation = (props) => {
                     ))}
                 </tbody>
             </table>
-
+            
             <table id="calculateStatTable">
                 
                 <thead>
@@ -241,7 +248,7 @@ const Infomation = (props) => {
                     <option 
                     value={data} 
                     key={data} 
-                    > {`Level${data}`}
+                    > {`Level: ${data}`}
                     </option>
                 ))
                 }
@@ -257,14 +264,15 @@ const Infomation = (props) => {
                         </tr>
                     ))}
                     </tbody>
-             <Pie
+             <Pie id="statusChart"
                         data={statusPieChart}
                         options={{
                             title: {
                                 display: true,
                                 text: `Status Of ${name}`,
                             },
-                        }}
+                        }
+                    }
                     />
              </table>
 
@@ -298,10 +306,10 @@ const Infomation = (props) => {
                 <tr>
                    <td> LateGameWin 40:01 - </td> 
                    <td>{keyOfDurationLateGame}</td>
-                </tr>    
-                
+                </tr>
+
                 </tbody>
-                <Pie
+                <Pie id="gameAnalyzeChart"
                     data={gameAnalyzeDataPieChart}
                     options={{
                         title: {
@@ -313,6 +321,7 @@ const Infomation = (props) => {
                     height={0.25}
                 />
             </table>
+
             <Plot id="pickRateGraph"
                     data={[
                     {
@@ -342,6 +351,7 @@ const Infomation = (props) => {
                     ]}
                     layout={ {width: 640, height: 540, title: 'WinRate Chart'} }
                 />
+
              </container>
 
         </div>

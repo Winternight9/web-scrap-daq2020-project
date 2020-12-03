@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js'
+import { Row, Col } from 'react-bootstrap'
 import '../style/attribute.css'
 
 const Attribute = (props) => {
@@ -7,8 +8,6 @@ const Attribute = (props) => {
     const [secondHeroAttributeData, setSecondHeroAttributeData] = useState([])
     const [keyOfJsonHeroData, setKeyOfJsonHeroData] = useState([])
     const [keyOfStatus, setKeyOfStatus] = useState([]);
-    const [firstHeroBaseStatValue, setFirstHeroBaseStatValue] = useState([]);
-    const [secondHeroBaseStatValue, setSecondHeroBaseStatValue] = useState([]);
     const [firstHeroGainStatValue, setFirstHeroGainStatValue] = useState([]);
     const [secondHeroGainStatValue, setSecondHeroGainStatValue] = useState([]);
 
@@ -27,29 +26,23 @@ const Attribute = (props) => {
             const keyOfHeroJson = Object.keys(firstHeroAttributeJson[0]).slice(22,38);
             let keyStat = []
             let firstHeroGainValue = []
-            let firstHeroBaseValue = []
             let secondHeroGainValue = []
-            let secondHeroBaseValue = []
             for(let i=0; i<keyOfHeroJson.slice(10,16).length;i++){
                 if(i%2 === 0){
                     let calFirstHero = (Math.round((firstHeroValue.slice(10,16)[i] + (firstHeroValue.slice(10,16)[i+1]*props.level)+ Number.EPSILON) * 100)/100);
                     let calSecondHero = (Math.round((secondHeroValue.slice(10,16)[i] + (secondHeroValue.slice(10,16)[i+1]*props.level)+ Number.EPSILON) * 100)/100);
 
                     firstHeroGainValue.push(calFirstHero)
-                    firstHeroBaseValue.push(firstHeroValue.slice(10,16)[i])
 
                     secondHeroGainValue.push(calSecondHero)
-                    secondHeroBaseValue.push(secondHeroValue.slice(10,16)[i])
 
                     keyStat.push(keyOfHeroJson.slice(10,16)[i].replace('Base',''))
                 }
             }
             setFirstHeroAttributeData(firstHeroValue);
-            setFirstHeroBaseStatValue(firstHeroBaseValue);
             setFirstHeroGainStatValue(firstHeroGainValue);            
 
             setSecondHeroAttributeData(secondHeroValue);
-            setSecondHeroBaseStatValue(secondHeroBaseValue);
             setSecondHeroGainStatValue(secondHeroGainValue);
 
             setKeyOfStatus(keyStat)
@@ -60,6 +53,7 @@ const Attribute = (props) => {
 
     return (
         <div id="attribute">
+            <Row>
             <table>
                 <thead>
                     <tr id="tr_2">
@@ -88,6 +82,8 @@ const Attribute = (props) => {
                     ))}
                 </tbody>
             </table>
+            </Row>
+            <Row>
             <table>
                 <thead>
                     <tr>
@@ -117,7 +113,7 @@ const Attribute = (props) => {
                         x: keyOfStatus,
                         y: firstHeroGainStatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'orange'},
                         name:props.firstHero
                     },
@@ -125,13 +121,14 @@ const Attribute = (props) => {
                         x: keyOfStatus,
                         y: secondHeroGainStatValue,
                         type: 'scatter',
-                        mode:"lines",
+                        mode:"lines + markers",
                         marker: {color: 'blue'},
                         name:props.secondHero
                     },
                     ]}
                     layout={ {width: 620, height: 540, title: 'Stat Chart'} }
                 />
+            </Row>
         </div>
     )
 }
